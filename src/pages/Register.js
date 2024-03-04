@@ -1,18 +1,47 @@
-import React from 'react'
-import {Button,Form,Input} from 'antd';
-import {Link} from 'react-router-dom'
+import React, { useEffect } from "react";
+import {Form, Input, Button, Radio, message } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import { RegisterUser } from "../calls/users";
+
+
 
 function Register() {
+
+const onFinish = async (values)=>{
+  console.log(values)
+  try {
+    const response = await RegisterUser(values)
+    if(response.success){
+     message.success(response.message)
+    }
+    else{
+     message.error(response.message)
+    }
+  } catch (error) {
+   message.error(error.message)
+  }
+}
+
+const navigate = useNavigate()
+
+
+useEffect(() => {
+  if(localStorage.getItem('token')){
+      navigate("/");
+  }
+} , [])
+
+
   return (
     <>
-    <header className="App-header">
+      <header className="App-header">
         <main className="main-area mw-500 text-center px-3">
-        <section className="left-section">
+          <section className="left-section">
             <h1>Register to BookMyShow</h1>
-        </section>
-        <section className='right-section'>
-            <Form layout='vertical'>
-            <Form.Item
+          </section>
+          <section className="right-section">
+            <Form layout="vertical" onFinish={onFinish}>
+              <Form.Item
                 label="Name"
                 htmlFor="name"
                 name="name"
@@ -70,12 +99,11 @@ function Register() {
                 Already a user? <Link to="/login">Login now</Link>
               </p>
             </div>
-
-        </section>
+          </section>
         </main>
-    </header>
+      </header>
     </>
-  )
+  );
 }
 
-export default Register
+export default Register;
